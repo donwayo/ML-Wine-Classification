@@ -8,7 +8,7 @@ K = 2;  % number of classes
 wine = W(randperm(height(W)),:);
 train_set = wine(1:n_train,:);
 valid_set = wine(n_train+1:end, :);
-feat = 11   % based on which feature we want to make the prediction
+feat = 5   % based on which feature we want to make the prediction
 
 reds = train_set(strcmp(train_set.type, 'Red'),:);  % takes all the information for the red wines
 x_red = reds{:,1:M-2} ;
@@ -41,5 +41,8 @@ discr_white = - log(2*pi)/2 - log(mle_s_white) - ((CH{:, feat}-mle_m_white).^2)/
 pred_ch = discr_red < discr_white;
 white = 100*sum(pred_ch == 1)/num
 red = 100*sum(pred_ch == 0)/num
+
+CH_new = [CH array2table(pred_ch)];
+csvwrite('challenge_classified.csv', CH_new)
 
 
