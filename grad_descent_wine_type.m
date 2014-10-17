@@ -15,44 +15,31 @@ r_type = strcmp(train_set.type, 'White');  % if wine is white, give value 1
 
 x_valid = W{n_train+1:end,1:d-2};
 r_valid = strcmp(valid_set.type, 'White');
-m = N-n_train;
 
 niter = 1000;       % number of iterations
-theta = zeros(1, 11);      % !! can it change to theta = ... ?
+theta = zeros(1, (d-2));
 alpha = 0.001;        % step
 
 eta = repmat(mean(x_train), n_train, 1);    % feature scaling
 sigma = repmat(std(x_train), n_train, 1);
 x_train = (x_train - eta)./sigma;
 
-% theta_0 = 1;
-% theta = ones(1,d-2);
-% 
-% %   === notes ===
-% % h_theta = 1./(1+exp(-theta'*x_train))
-% % lamda = 
-% % J = -1/N*sum(r_type*log(h_theta) -(1-r_type)*log(1-h_theta));
-% % J_der = -( r_type*(1-h_theta) - (1-r_type)*h_theta )/N;
-% % % correct vectorized implementation
-% %     theta = theta - alpha/N*sum((h_theta - r_type)*x_train);   
-% %   =============
-% 
 for i = 2:niter+1
 
     h_theta = 1./(1+exp(-x_train*theta'));
-    J_der = -( h_theta - r_type )' * x_train/N;
+    J_der = -( h_theta - r_type )' * x_train/n_train;
     theta = theta - alpha*J_der;
-    J(i-1) = (r_type' * log(h_theta) + (1-r_type') * log(1-h_theta))/N;
+    J(i-1) = (r_type' * log(h_theta) + (1-r_type') * log(1-h_theta))/n_train;
 
 end
-% theta, theta_0
+
 theta_opt = theta ;
 
 h_theta_val = 1./( 1+exp(-x_valid*theta_opt') );
-% 
-pred = (h_theta_val >=0);
-err = sum(mean((pred-r_valid).^2))
-% err = -(r_valid'*log(h_theta_val) + (1-r_valid')*log(1 - h_theta_val));
+ 
+pred = (h_theta_val >= 0.5);
+
+err = -(r_valid'*log(h_theta_val) + (1-r_valid')*log(1 - h_theta_val));
 
 CH = readtable('challenge_data.csv');
 [N_ch, d_ch] = size(CH);
@@ -63,6 +50,8 @@ sigma_ch = repmat(std(x_ch), N_ch, 1);
 x_ch = (x_ch - eta_ch)./sigma_ch;
 
 h_theta_ch = 1./( 1+exp(-x_ch*theta_opt') );
-y_ch = (h_theta_ch >= 0);
+y_ch = (h_theta_ch >= 0.5);
 white = 100*sum((y_ch == 1))/N_ch
 red = 100*sum((y_ch == 0))/N_ch
+
+CH_new = [CH array2table(y_ch)];
