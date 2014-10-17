@@ -24,7 +24,7 @@ eta = repmat(mean(x_train), n_train, 1);    % feature scaling
 sigma = repmat(std(x_train), n_train, 1);
 x_train = (x_train - eta)./sigma;
 
-for i = 2:niter+1
+for i = 2:niter
 
     h_theta = 1./(1+exp(-x_train*theta'));
     J_der = -( h_theta - r_type )' * x_train/n_train;
@@ -54,4 +54,3 @@ y_ch = (h_theta_ch >= 0.5);
 white = 100*sum((y_ch == 1))/N_ch
 red = 100*sum((y_ch == 0))/N_ch
 
-CH_new = [CH array2table(y_ch)];
