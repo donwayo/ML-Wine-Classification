@@ -1,0 +1,3 @@
+Description:
+
+Trained a Gaussian MLE for each level, and each parameter. Thus resulting in generating 7x11x2 distributions for the classification. Each distribution was tested against the training set, and the ones that yielded the lowest error were selected for each quality level. This was then tested against the validation set so as to perform cross validation. 
