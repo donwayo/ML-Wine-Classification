@@ -1,4 +1,5 @@
 wine_data = readtable('train_data.csv');
+chall_data = readtable('challenge_data.csv');
 
 wine_parameters_disc = cell(11,7);
 
@@ -9,12 +10,16 @@ wine_quality_n = 7;
 wine_parameters_n = 11;
 
 % Select training data.
-training_data = wine_data{1:4000, 1:12};
-validation_data = wine_data{4001:end, 1:12};
+training_data = wine_data{1001:5000, 1:12};
+validation_data = wine_data{1:1000, 1:12};
 
 % Actual wine quality labels.
 r = training_data(:,12);
+r_val = validation_data(:,12);
+
 r_q_idx = cell(wine_quality_n,1);
+
+
 
 for i = wine_quality
     r_q_idx{i} = find(r == i);
@@ -29,16 +34,16 @@ e_p = zeros(wine_parameters_n, wine_quality_n);
 % Do for everything.
 for j = wine_parameters
     % Select the data for one parameter.
-    t_d = training_data(:,j);
+    v_d = training_data(:,j);
     
     % Calculate MLE discriminators for the selected parameter.
     for i = wine_quality 
-        [p, m, s, p2, m2, s2] = fit_mle(t_d, r, i);
+        [p, m, s, p2, m2, s2] = fit_mle(v_d, r, i);
         wine_parameters_disc{j,i} = [p,m,s,p2,m2,s2];
     end
     
     % Test the accuracy of each discriminator with the validation set.
-    g{j} = classify_mle(t_d, wine_parameters_disc(j,:));
+    g{j} = classify_mle(v_d, wine_parameters_disc(j,:));
     
     
     for d = wine_quality
@@ -49,7 +54,6 @@ end
 
 fbest_param = zeros(11,2);
 params = wine_parameters;
-
 
 
 %% Selection
@@ -84,7 +88,7 @@ for d = wine_quality
             e_acc = mean((accum | g{params(p)}(:,d)) == rd);
             
             % Check if it's the best yet.
-            if e_acc > best_param(2)
+            if e_acc >= best_param(2)
                 best_param = [p, e_acc];
             end
         end
@@ -98,5 +102,31 @@ for d = wine_quality
         % Update the accumulator for quality label
         accum = accum | g{best_param(1)}(:,d);
     end
+    
+    % Save the best for this quality label.
     best_params_cells{d} = fbest_param;
+end
+
+%% Clasification 
+%
+
+vl_data = validation_data;
+cl_data = chall_data{:, 1:12};
+
+
+val_c = zeros(length(cl_data),7);
+te_c = zeros(length(cl_data),7);
+
+%best_params_cells{3}(1,:) = [4,0];
+
+y = zeros(length(cl_data),1);
+
+for i = 1:length(best_params_cells)
+    best_param = best_params_cells{i}(1,1);
+    mle_vars = wine_parameters_disc{best_param,i};
+    val_c(:,i)= classify_mle(vl_data(:,j), {mle_vars}); 
+    te_c(:,i) = classify_mle(cl_data(:,j), {mle_vars}); 
+    
+    mean(val_c(:,i) == (r_val == i))
+    
 end
