@@ -23,6 +23,7 @@ mdl_type = fitcsvm(x_data, label_type, 'KernelFunction', 'linear', ...
 %     'Standardize', true)
 
 cross_val_mdl_type = crossval(mdl_type, 'KFold', 40)
+kloss = kfoldloss(cross_val_mdl_type)
 % compare predicted labels with the actual labels
 % and find the number of true elements
 accur = numel(find(strcmp(pred_type, label_type) == 1))/length(label_type)*100
