@@ -1,8 +1,3 @@
-% ----------------------------------------------------------
-%    @TODO: we need to specify 'polynomialOrder' kernel
-%       if we want to use SVM for the quality classification
-% ----------------------------------------------------------
-
 clear all 
 close all
 
@@ -17,10 +12,6 @@ label_type = wine{:,d};         % column d=13 for the type
 mdl_type = fitcsvm(x_data, label_type, 'KernelFunction', 'linear', ...
     'Standardize', true, 'ClassNames', {'Red', 'White'})
 [pred_type, score] = predict(mdl_type, x_data);
-
-% % see @TODO
-% mdl_qlt = fitcsvm(x_data, label_qlt, 'KernelFunction', 'polynomialOrder', ...
-%     'Standardize', true)
 
 cross_val_mdl_type = crossval(mdl_type, 'KFold', 40)
 kloss = kfoldLoss(cross_val_mdl_type)
