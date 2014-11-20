@@ -15,7 +15,7 @@ label_qlt =  wine{:,d-1};       % column d=12 for the quality
 label_type = wine{:,d};         % column d=13 for the type
 
 mdl_type = fitcsvm(x_data, label_type, 'KernelFunction', 'linear', ...
-    'Standardize', true, 'ClassNames', {'White', 'Red'})
+    'Standardize', true, 'ClassNames', {'Red', 'White'})
 [pred_type, score] = predict(mdl_type, x_data);
 
 % % see @TODO
@@ -23,10 +23,10 @@ mdl_type = fitcsvm(x_data, label_type, 'KernelFunction', 'linear', ...
 %     'Standardize', true)
 
 cross_val_mdl_type = crossval(mdl_type, 'KFold', 40)
-kloss = kfoldloss(cross_val_mdl_type)
-% compare predicted labels with the actual labels
-% and find the number of true elements
-accur = numel(find(strcmp(pred_type, label_type) == 1))/length(label_type)*100
+kloss = kfoldLoss(cross_val_mdl_type)
+actual = strcmp(label_type,'White');
+predicted = strcmp(pred_type,'White');
+[confus,numcorrect,precision,recall,FScore]= getcm(actual, predicted, [0, 1])
 
 % ---------------------------------------------------
 %           *** DELETE BEFORE SUBMISSION ***
