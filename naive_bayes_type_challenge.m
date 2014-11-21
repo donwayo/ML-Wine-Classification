@@ -42,7 +42,7 @@ pred_ch = discr_red < discr_white;
 white = 100*sum(pred_ch == 1)/num
 red = 100*sum(pred_ch == 0)/num
 
-CH_new = [CH array2table(pred_ch)];
-csvwrite('challenge_classified.csv', CH_new)
+% CH_new = [CH array2table(pred_ch)];
+% csvwrite('challenge_classified.csv', CH_new)
 
 
