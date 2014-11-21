@@ -22,3 +22,6 @@ kloss = kfoldLoss(cross_val_mdl_type)
 actual = strcmp(TEST{:,d},'White');
 predicted = strcmp(pred_type,'White');
 [confus,numcorrect,precision,recall,FScore]= getcm(actual, predicted, [0, 1])
+
+figure;
+h(1:2) = gscatter(x_test(:,1),x_test(:,2),TEST{:,d}, 'gr');

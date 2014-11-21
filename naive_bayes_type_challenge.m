@@ -8,7 +8,7 @@ K = 2;  % number of classes
 wine = W(randperm(height(W)),:);
 train_set = wine(1:n_train,:);
 valid_set = wine(n_train+1:end, :);
-feat = 5   % based on which feature we want to make the prediction
+feat = 1   % based on which feature we want to make the prediction
 
 reds = train_set(strcmp(train_set.type, 'Red'),:);  % takes all the information for the red wines
 x_red = reds{:,1:M-2} ;
@@ -24,25 +24,19 @@ mle_p_white = sum(x_white(:,feat)) / length(r_white);
 mle_m_white = sum( x_white(:,feat) )/length(r_white);
 mle_s_white = sqrt( mean( (x_white(:,feat)-mle_m_white).^2 ) );
 
-% === Take the validation set ===
-
 discr_red = - log(2*pi)/2 - log(mle_s_red) - ((wine{n_train+1:end, feat}-mle_m_red).^2)/(2*(mle_s_red^2)) + log(mle_p_red);
 discr_white = - log(2*pi)/2 - log(mle_s_white) - ((wine{n_train+1:end, feat}-mle_m_white).^2)/(2*(mle_s_white^2)) + log(mle_p_white);
 pred = discr_red < discr_white;
 wine_type = strcmp(valid_set.type, 'White');    % assign 0/1 for red/white
 err = mean((wine_type-pred).^2)
 
-% === Take the validation set ===
-
-CH = readtable('challenge_data.csv');
+CH = readtable('test_dataset.csv');
 [num, d] = size(CH);
 discr_red = - log(2*pi)/2 - log(mle_s_red) - ((CH{:, feat}-mle_m_red).^2)/(2*(mle_s_red^2)) + log(mle_p_red);
 discr_white = - log(2*pi)/2 - log(mle_s_white) - ((CH{:, feat}-mle_m_white).^2)/(2*(mle_s_white^2)) + log(mle_p_white);
 pred_ch = discr_red < discr_white;
-white = 100*sum(pred_ch == 1)/num
-red = 100*sum(pred_ch == 0)/num
+% white = 100*sum(pred_ch == 1)/num
+% red = 100*sum(pred_ch == 0)/num
 
-% CH_new = [CH array2table(pred_ch)];
-% csvwrite('challenge_classified.csv', CH_new)
-
-
+actual = strcmp(CH{:,d}, 'White');
+[confus,numcorrect,precision,recall,FScore]= getcm(actual, pred_ch, [0, 1])

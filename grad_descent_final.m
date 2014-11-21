@@ -17,6 +17,9 @@ qlt_test = TEST{:,d-1};
 mdl_type = fitglm(x_train, type_train, 'Distribution', 'Binomial');
 [pred_type, score] = predict(mdl_type, x_test);
 
+figure;
+h(1:2) = gscatter(x_test(:,1),x_test(:,2),TEST{:,d}, 'gr');
+
 mdl_qlt =  fitglm(x_train, qlt_label, 'Distribution', 'Poisson');
 [pred_qlt, score2] = predict(mdl_qlt, x_test);
 

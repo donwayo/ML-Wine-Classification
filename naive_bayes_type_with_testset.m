@@ -32,8 +32,6 @@ pred = discr_red < discr_white;
 wine_type = strcmp(valid_set.type, 'White');    % assign 0/1 for red/white
 err = mean((wine_type-pred).^2)
 
-% === Take the validation set ===
-
 CH = readtable('test_dataset.csv');
 [num, d] = size(CH);
 discr_red = - log(2*pi)/2 - log(mle_s_red) - ((CH{:, feat}-mle_m_red).^2)/(2*(mle_s_red^2)) + log(mle_p_red);
