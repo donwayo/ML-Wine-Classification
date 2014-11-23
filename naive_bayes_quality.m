@@ -1,5 +1,4 @@
-wine_data = readtable('train_data.csv');
-chall_data = readtable('test_dataset.csv');
+function [r_val, FScore2] = naive_bayes_quality(wine_data, chall_data)
 
 wine_parameters_disc = cell(11,7);
 
@@ -130,3 +129,6 @@ for i = 1:length(best_params_cells)
     mean(val_c(:,i) == (r_val == i))
     
 end
+
+actual = chall_data{:,12};
+[confus2,numcorrect2,precision2,recall2,FScore2]= getcm(actual, r_val, [1, 2, 3, 4, 5, 6, 7])

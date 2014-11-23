@@ -41,16 +41,18 @@ pred = (h_theta_val >= 0.5);
 
 err = -(r_valid'*log(h_theta_val) + (1-r_valid')*log(1 - h_theta_val));
 
-CH = readtable('challenge_data.csv');
+CH = readtable('test_dataset.csv');
 [N_ch, d_ch] = size(CH);
-x_ch = CH{:,2:d_ch-2};
+x_ch = CH{:,1:d_ch-2};
 
 eta_ch = repmat(mean(x_ch), N_ch, 1);    % feature scaling
 sigma_ch = repmat(std(x_ch), N_ch, 1);
 x_ch = (x_ch - eta_ch)./sigma_ch;
 
 h_theta_ch = 1./( 1+exp(-x_ch*theta_opt') );
-y_ch = (h_theta_ch >= 0.5);
-white = 100*sum((y_ch == 1))/N_ch
-red = 100*sum((y_ch == 0))/N_ch
+y_ch = (h_theta_ch <= 0.5);
+% white = 100*sum((y_ch == 1))/N_ch
+% red = 100*sum((y_ch == 0))/N_ch
 
+actual = strcmp(CH{:,d}, 'White');
+[confus,numcorrect,precision,recall,FScore]= getcm(actual, y_ch, [0, 1])
